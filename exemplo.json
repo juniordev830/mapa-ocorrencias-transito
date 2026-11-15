@@ -1,0 +1,19 @@
+{
+  "data": "2026-11-14",
+  "ocorrencias": [
+    {
+      "local": "Avenida Tomaz Landim, RN",
+      "tipo": "obra",
+      "inicio": "2026-11-12",
+      "fim": "2026-11-20",
+      "gravidade": 2
+    },
+    {
+      "local": "Igapó, Natal, RN",
+      "tipo": "alagamento",
+      "inicio": "2026-11-08",
+      "fim": "2026-11-11",
+      "gravidade": 3
+    }
+  ]
+}
