@@ -31,15 +31,23 @@ from datetime import date
 
 
 def run(data):
+    if not isinstance(data, dict):
+        raise ValueError("A entrada deve ser um objeto JSON.")
+    ocorrencias = data["ocorrencias"]
+    if not isinstance(ocorrencias, list) or any(not isinstance(item, dict) for item in ocorrencias):
+        raise ValueError("O campo ocorrencias deve ser uma lista de objetos.")
     dia = date.fromisoformat(texto(data["data"]))
+    minima = inteiro(data.get("gravidade_minima", 1), 1)
+    if minima > 3:
+        raise ValueError("A gravidade mínima deve estar entre 1 e 3.")
     ativas = []
-    for item in data["ocorrencias"]:
+    for item in ocorrencias:
         inicio = date.fromisoformat(texto(item["inicio"]))
         fim = date.fromisoformat(texto(item["fim"]))
         gravidade = inteiro(item["gravidade"], 1)
         if inicio > fim or gravidade > 3:
             raise ValueError("Use um período crescente e gravidade de 1 a 3.")
-        if inicio <= dia <= fim:
+        if inicio <= dia <= fim and gravidade >= minima:
             local = texto(item["local"])
             ativas.append({"local": local, "tipo": texto(item["tipo"]), "gravidade": gravidade,
                            "google_maps": busca(local)})

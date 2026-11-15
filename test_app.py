@@ -15,6 +15,23 @@ class ProjetoTest(unittest.TestCase):
         result = run(data)
         self.assertEqual(result['ativas'], 1)
 
+    def test_filtra_ocorrencias_com_gravidade_minima(self):
+        base = {"inicio": "2026-11-15", "fim": "2026-11-16", "tipo": "obra"}
+        data = {"data": "2026-11-15", "gravidade_minima": 2, "ocorrencias": [
+            dict(base, local="A", gravidade=1),
+            dict(base, local="B", gravidade=2),
+            dict(base, local="C", gravidade=3),
+        ]}
+        self.assertEqual([row["local"] for row in run(data)["ocorrencias"]], ["C", "B"])
+        self.assertEqual(run(dict(data, gravidade_minima=1))["ativas"], 3)
+
+    def test_rejeita_campos_de_filtro_e_listas_invalidas(self):
+        with self.assertRaises(ValueError):
+            run({"data": "2026-11-15", "ocorrencias": {}})
+        for invalid in (0, 4, True):
+            with self.subTest(invalid=invalid), self.assertRaises(ValueError):
+                run({"data": "2026-11-15", "ocorrencias": [], "gravidade_minima": invalid})
+
     def test_cli_com_exemplo(self):
         result = subprocess.run(
             [sys.executable, str(ROOT / "app.py"), str(ROOT / "exemplo.json")],

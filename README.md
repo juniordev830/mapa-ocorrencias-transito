@@ -22,3 +22,5 @@ Os links seguem a documentação de [Maps URLs](https://developers.google.com/ma
 ## Estado do projeto
 
 Versão inicial funcional por linha de comando, sem interface web. Usa apenas a biblioteca padrão do Python. Os testes executam os exemplos e verificam as regras do projeto.
+
+Use o campo opcional `gravidade_minima` na entrada para exibir somente ocorrências ativas com gravidade igual ou superior ao valor informado, de 1 a 3. O padrão é 1.
