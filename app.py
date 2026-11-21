@@ -28,6 +28,15 @@ def busca(local):
 
 
 from datetime import date
+import re
+
+
+def data_iso(value):
+    """Require a calendar-valid date in canonical YYYY-MM-DD form."""
+    value = texto(value)
+    if not re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", value):
+        raise ValueError("Use datas no formato AAAA-MM-DD.")
+    return date.fromisoformat(value)
 
 
 def run(data):
@@ -36,14 +45,14 @@ def run(data):
     ocorrencias = data["ocorrencias"]
     if not isinstance(ocorrencias, list) or any(not isinstance(item, dict) for item in ocorrencias):
         raise ValueError("O campo ocorrencias deve ser uma lista de objetos.")
-    dia = date.fromisoformat(texto(data["data"]))
+    dia = data_iso(data["data"])
     minima = inteiro(data.get("gravidade_minima", 1), 1)
     if minima > 3:
         raise ValueError("A gravidade mínima deve estar entre 1 e 3.")
     ativas = []
     for item in ocorrencias:
-        inicio = date.fromisoformat(texto(item["inicio"]))
-        fim = date.fromisoformat(texto(item["fim"]))
+        inicio = data_iso(item["inicio"])
+        fim = data_iso(item["fim"])
         gravidade = inteiro(item["gravidade"], 1)
         if inicio > fim or gravidade > 3:
             raise ValueError("Use um período crescente e gravidade de 1 a 3.")
