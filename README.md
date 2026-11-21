@@ -13,7 +13,7 @@ python -m unittest -v
 
 ## Uso
 
-As ocorrências do exemplo são fictícias. Informe sua data de consulta e as datas de início e fim de cada ocorrência, inclusive. O programa ordena as ativas por gravidade e oferece um link de mapa por ponto.
+As datas devem ser datas reais do calendário, no formato `AAAA-MM-DD` (por exemplo, `2026-11-15`); formatos compactos, dias impossíveis e separadores alternativos são rejeitados.\n\nAs ocorrências do exemplo são fictícias. Informe sua data de consulta e as datas de início e fim de cada ocorrência, inclusive. O programa ordena as ativas por gravidade e oferece um link de mapa por ponto.
 
 ## Google Maps
 
@@ -34,3 +34,5 @@ Também é possível encadear a ferramenta com outro comando usando `-` como ent
 ```bash
 cat exemplo.json | python app.py -
 ```
+
+Arquivos e entrada padrão JSON são limitados a 1 MB (1.000.000 bytes). Ocorrências enviadas acima desse limite não serão carregadas.

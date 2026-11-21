@@ -28,6 +28,15 @@ def busca(local):
 
 
 from datetime import date
+import re
+
+
+def data_iso(value):
+    """Require a calendar-valid date in canonical YYYY-MM-DD form."""
+    value = texto(value)
+    if not re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", value):
+        raise ValueError("Use datas no formato AAAA-MM-DD.")
+    return date.fromisoformat(value)
 
 
 def run(data):
@@ -36,14 +45,14 @@ def run(data):
     ocorrencias = data["ocorrencias"]
     if not isinstance(ocorrencias, list) or any(not isinstance(item, dict) for item in ocorrencias):
         raise ValueError("O campo ocorrencias deve ser uma lista de objetos.")
-    dia = date.fromisoformat(texto(data["data"]))
+    dia = data_iso(data["data"])
     minima = inteiro(data.get("gravidade_minima", 1), 1)
     if minima > 3:
         raise ValueError("A gravidade mínima deve estar entre 1 e 3.")
     ativas = []
     for item in ocorrencias:
-        inicio = date.fromisoformat(texto(item["inicio"]))
-        fim = date.fromisoformat(texto(item["fim"]))
+        inicio = data_iso(item["inicio"])
+        fim = data_iso(item["fim"])
         gravidade = inteiro(item["gravidade"], 1)
         if inicio > fim or gravidade > 3:
             raise ValueError("Use um período crescente e gravidade de 1 a 3.")
@@ -61,6 +70,8 @@ import sys
 from relatorio_csv import escrever_csv
 import json
 from pathlib import Path
+
+MAX_JSON_BYTES = 1_000_000
 
 
 def objeto_sem_campos_repetidos(pares):
@@ -83,19 +94,22 @@ def main():
     args = parser.parse_args()
 
     try:
-        entrada = nullcontext(sys.stdin.buffer) if args.entrada == "-" else Path(args.entrada).open(encoding="utf-8-sig")
+        entrada = nullcontext(sys.stdin.buffer) if args.entrada == "-" else Path(args.entrada).open("rb")
         with entrada as source:
-            data = json.load(
-                source,
-                object_pairs_hook=objeto_sem_campos_repetidos,
-                parse_constant=rejeitar_constante_json,
-            )
+            raw = source.read(MAX_JSON_BYTES + 1)
+        if len(raw) > MAX_JSON_BYTES:
+            raise ValueError("JSON excede o limite de 1 MB.")
+        data = json.loads(
+            raw,
+            object_pairs_hook=objeto_sem_campos_repetidos,
+            parse_constant=rejeitar_constante_json,
+        )
         if not isinstance(data, dict):
             raise ValueError("A entrada deve ser um objeto JSON.")
         result = run(data)
     except RecursionError:
         parser.exit(2, "O JSON tem níveis de aninhamento demais.\n")
-    except (KeyError, TypeError, ValueError, OSError) as exc:
+    except (KeyError, TypeError, ValueError, UnicodeError, OSError) as exc:
         parser.exit(2, f"Erro nos dados ou na execução: {exc}\n")
 
     sys.stdout.reconfigure(encoding="utf-8", newline="\n")
