@@ -48,8 +48,9 @@ def run(data):
     if not isinstance(data, dict):
         raise ValueError("A entrada deve ser um objeto JSON.")
     ocorrencias = data["ocorrencias"]
-    if not isinstance(ocorrencias, list) or any(not isinstance(item, dict) for item in ocorrencias):
-        raise ValueError("O campo ocorrencias deve ser uma lista de objetos.")
+    if (not isinstance(ocorrencias, list) or len(ocorrencias) > 5000
+            or any(not isinstance(item, dict) for item in ocorrencias)):
+        raise ValueError("O campo ocorrencias deve conter até 5000 objetos.")
     dia = data_iso(data["data"])
     minima = inteiro(data.get("gravidade_minima", 1), 1)
     if minima > 3:
