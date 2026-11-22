@@ -1,10 +1,15 @@
 'Filtre registros locais de obras, alagamentos e bloqueios por data de validade.'
 
 
-def texto(value):
+def texto(value, max_chars=300):
     if not isinstance(value, str) or not value.strip():
         raise ValueError("Use texto não vazio.")
-    return value.strip()
+    normalized = value.strip()
+    if len(normalized) > max_chars:
+        raise ValueError(f"Use texto com até {max_chars} caracteres.")
+    if any(ord(char) < 32 or ord(char) == 127 for char in normalized):
+        raise ValueError("O texto não pode conter caracteres de controle.")
+    return normalized
 
 
 def inteiro(value, minimo=0):
