@@ -62,9 +62,10 @@ def run(data):
         gravidade = inteiro(item["gravidade"], 1)
         if inicio > fim or gravidade > 3:
             raise ValueError("Use um período crescente e gravidade de 1 a 3.")
+        local = texto(item["local"])
+        tipo = texto(item["tipo"])
         if inicio <= dia <= fim and gravidade >= minima:
-            local = texto(item["local"])
-            ativas.append({"local": local, "tipo": texto(item["tipo"]), "gravidade": gravidade,
+            ativas.append({"local": local, "tipo": tipo, "gravidade": gravidade,
                            "google_maps": busca(local)})
     ativas.sort(key=lambda item: (-item["gravidade"], item["local"]))
     return {"ocorrencias": ativas, "ativas": len(ativas)}
