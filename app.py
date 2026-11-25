@@ -54,6 +54,13 @@ def run(data):
     minima = inteiro(data.get("gravidade_minima", 1), 1)
     if minima > 3:
         raise ValueError("A gravidade mínima deve estar entre 1 e 3.")
+    pesquisa = data.get("tipos")
+    if pesquisa is not None and (not isinstance(pesquisa, list) or not pesquisa):
+        raise ValueError("tipos deve ser uma lista não vazia de textos.")
+    from unicodedata import normalize, combining
+    def chave(value):
+        return "".join(c for c in normalize("NFKD", texto(value).casefold()) if not combining(c))
+    filtro = {chave(tipo) for tipo in pesquisa} if pesquisa is not None else None
     ativas = []
     for item in ocorrencias:
         inicio = data_iso(item["inicio"])
@@ -62,6 +69,8 @@ def run(data):
         if inicio > fim or gravidade > 3:
             raise ValueError("Use um período crescente e gravidade de 1 a 3.")
         if inicio <= dia <= fim and gravidade >= minima:
+            if filtro is not None and chave(item["tipo"]) not in filtro:
+                continue
             local = texto(item["local"])
             ativas.append({"local": local, "tipo": texto(item["tipo"]), "gravidade": gravidade,
                            "google_maps": busca(local)})
