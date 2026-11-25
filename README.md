@@ -36,3 +36,8 @@ cat exemplo.json | python app.py -
 ```
 
 Arquivos e entrada padrão JSON são limitados a 1 MB (1.000.000 bytes). Ocorrências enviadas acima desse limite não serão carregadas.
+
+
+## Novo recurso
+
+A lista opcional `tipos` filtra ocorrências ativas por categoria sem distinção de caixa e acentos. A validade temporal e gravidade continuam sendo respeitadas; os dados são cadastrados, não um feed ao vivo.
