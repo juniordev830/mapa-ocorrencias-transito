@@ -1,5 +1,7 @@
 # Registro de ocorrências de trânsito
 
+**Navegação** · [Rodar](#rodar) · [Uso](#uso) · [Google Maps](#google-maps) · [Código e estudo](docs/ENGENHARIA_REVERSA.md)
+
 Filtre registros locais de obras, alagamentos e bloqueios por data de validade.
 
 ## Rodar
@@ -36,3 +38,9 @@ cat exemplo.json | python app.py -
 ```
 
 Arquivos e entrada padrão JSON são limitados a 1 MB (1.000.000 bytes). Ocorrências enviadas acima desse limite não serão carregadas.
+
+## Código e roteiro de estudo
+
+Como testar uma ocorrência cuja vigência termina hoje sem depender do relógio real? O [guia de engenharia reversa](docs/ENGENHARIA_REVERSA.md) reúne o mapa dos módulos e uma pergunta técnica baseada no projeto.
+
+Mantido por [João Junior](https://github.com/juniordev830).
